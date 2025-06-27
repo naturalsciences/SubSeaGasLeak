@@ -1,0 +1,31 @@
+{
+    "name":"nitrogen",
+    "partial_pressure":{
+        "value": 80046.75,
+        "units":"Pa"
+    },
+    "initial_fraction_mol":{
+        "value":0,
+        "units":"%"
+    },
+    "molar_mass": {
+        "value": 28,
+        "units": "g/mol"
+    },
+    "critical_temperature":{
+        "value":126.2,
+        "units":"K"
+    },
+    "henry":{
+        "value":0.000006,
+        "units":"mol/(m³ Pa)"
+    },
+    "molar_volume":{
+        "value":0.0006,
+        "units":"m³/mol"
+    },
+    "air_diffusivity":{
+        "value":0.000006,
+        "units":"m²/s"
+    }
+}

@@ -1,0 +1,8 @@
+*.gif
+*.png
+log*
+requests*
+results*
+tmp*
+venv
+*.pyc

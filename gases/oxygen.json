@@ -1,0 +1,31 @@
+{
+    "name":"oxygen",
+    "partial_pressure":{
+        "value": 21278.25,
+        "units":"Pa"
+    },
+    "initial_fraction_mol":{
+        "value":0,
+        "units":"%"
+    },
+    "molar_mass": {
+        "value": 32,
+        "units": "g/mol"
+    },
+    "critical_temperature":{
+        "value":154.6,
+        "units":"K"
+    },
+    "henry":{
+        "value":0.00001283,
+        "units":"mol/(m³ Pa)"
+    },
+    "molar_volume":{
+        "value":0.0006,
+        "units":"m³/mol"
+    },
+    "air_diffusivity":{
+        "value":0.000006,
+        "units":"m²/s"
+    }
+}
