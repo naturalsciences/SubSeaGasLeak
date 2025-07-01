@@ -34,6 +34,9 @@ def get_depth(lon_pt, lat_pt):
     lon_pt : longitude of the point
     lat_pt : latitude of the point
     """
+    if not os.path.exists(PATH_GEBCO):
+        logging.error(f"File {PATH_GEBCO} does not exist. Please only use \"m above seabed\" as location_depth_units")
+
     with nc.Dataset(PATH_GEBCO, 'r') as ds:
         lon = ds.variables['lon'][:]
         lat = ds.variables['lat'][:]
@@ -181,7 +184,7 @@ def run(gui, sim_name, path_api, already_preprocessed):
                 f.close()
 
                 #must read the bathymmetry
-                if data["location_depth_units"] == "m above seabed":
+                if data["location_depth_units"].lower() == "m above seabed":
                     tot_depth = get_depth(data["location"]["coordinates"][0], data["location"]["coordinates"][1])
                     if tot_depth > 0:
                         logging.error(f"{sim_name:05d} location is not at sea")
@@ -273,7 +276,7 @@ def run(gui, sim_name, path_api, already_preprocessed):
             test_range(sim_name, lat, -360, 360, "latitude")
             lon = data["location"]["coordinates"][0]
             test_range(sim_name, lat, -360, 360, "longitude")
-            if data["location_depth_units"] == "m below sea surface":
+            if data["location_depth_units"].lower() == "m below sea surface":
                 depth = data["location"]["coordinates"][2]
             else:
                 logging.error(f"Error of depth units")
