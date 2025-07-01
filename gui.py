@@ -248,7 +248,7 @@ class UnderwaterGasReleaseGUI(QMainWindow):
         
         self.wind_speed_edit = QDoubleSpinBox()
         self.wind_speed_edit.setRange(0, 100)
-        self.wind_speed_edit.setValue(10)
+        self.wind_speed_edit.setValue(3)
         self.wind_speed_edit.setSuffix(" m/s")
         
         wind_layout.addRow("Wind Speed:", self.wind_speed_edit)

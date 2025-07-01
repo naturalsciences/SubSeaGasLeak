@@ -230,12 +230,12 @@ def save_quantity_layers(time, z_layers, quantity, title, units, path):
     plt.savefig(path)
 
 def q_released_bubble(times, releases, id_g):
-    amount_vola = np.zeros(len(times))
+    amount_release = np.zeros(len(times))
     for release in releases:
         id_time = np.searchsorted(times, release.time, side='left')-1 
-        amount_vola[id_time] += release.quantity[id_g]
+        amount_release[id_time] += release.quantity[id_g]
 
-    return np.cumsum(amount_vola)
+    return np.cumsum(amount_release)
 
 def q_released_layer(times, time_l, releases_l, id_g):
     amount_vola = np.zeros(len(times))
@@ -394,7 +394,8 @@ def create_stackplot(times, vars, names, title, ylabel, path):
     plt.title(title)
     plt.legend(loc='upper left')
     plt.grid(True, alpha=0.3)
-    plt.tight_layout()
+    plt.xlim(times[0], times[-1])
+    plt.ylim(0,np.amax(np.sum(vars,axis=0)))
     plt.savefig(path)
 
 def run_postproc(path_metadata, path_particle, path_layers, path_release, id_gas_interest, x_res, y_res, alias_factor, mw, path_out, out_zip, path_timeseries, lon, lat, epoch_time):
@@ -433,14 +434,14 @@ def run_postproc(path_metadata, path_particle, path_layers, path_release, id_gas
             quantity_dis[i,j] = layer_matrix_quantity[j, id_layer, id_gas_interest]
             volume = rectangle_area(layer_matrix_x[j, id_layer], layer_matrix_y[j, id_layer])*dz[j]
             if volume > 0:
-                conc_dis[i,j] = quantity_dis[i,j] / volume * 1000 #ppm
+                conc_dis[i,j] = quantity_dis[i,j] / volume * 1000 * (mw[id_gas_interest]) #mg/l
 
     quantity_dis_kg = quantity_dis * (mw[id_gas_interest]) #to kg
     #concentration
 
    
-    save_quantity_layers(time_id_particles, z_layers, quantity_dis_kg,'Dissolved mass as a function of depth','kg',f'{path_timeseries}quantity_profile.png')
-    save_quantity_layers(time_id_particles, z_layers, conc_dis,'Concentration as a function of depth','ppm',f'{path_timeseries}concentration_profile.png')
+    save_quantity_layers(time_id_particles, z_layers, quantity_dis_kg,'Dissolved mass as a function of depth','[kg]',f'{path_timeseries}quantity_profile.png')
+    save_quantity_layers(time_id_particles, z_layers, conc_dis,'Concentration as a function of depth','[mg/l]',f'{path_timeseries}concentration_profile.png')
 
 
     quantity_tr_layer, quantity_tr_bubble, xs, ys = compute_vola(layer_matrix_x, layer_matrix_y, layer_release, time_id_layers, releases, x_res, y_res, alias_factor, time_id_particles, id_gas_interest)
@@ -465,8 +466,13 @@ def run_postproc(path_metadata, path_particle, path_layers, path_release, id_gas
     dis = q_dis_layer(time_id_particles, time_id_layers, layer_matrix_quantity, id_gas_interest)
     fresh = q_fresh(time_id_particles, particles, id_gas_interest)
     tot = rel_b + rel_l + dis + fresh
-    create_stackplot(time_id_particles, [rel_b*mw[id_gas_interest],rel_l*mw[id_gas_interest],dis*mw[id_gas_interest],fresh*mw[id_gas_interest]], ["Atmosphere from bubble", "Atmosphere from volatilization", "Dissolved", "In bubble"], "Mass repartition", "kg",f'{path_timeseries}mass_balance.png')
-    create_stackplot(time_id_particles, [rel_b/tot*100,rel_l/tot*100,dis/tot*100,fresh/tot*100], ["Atmosphere from bubble", "Atmosphere from volatilization", "Dissolved", "In bubble"], "Repartition", "%",f'{path_timeseries}repartition.png')
+    tot = tot[1:]
+    rel_b = rel_b[1:]
+    rel_l = rel_l[1:]
+    dis = dis[1:]
+    fresh = fresh[1:]
+    create_stackplot(time_id_particles[1:], [rel_b*mw[id_gas_interest],rel_l*mw[id_gas_interest],dis*mw[id_gas_interest],fresh*mw[id_gas_interest]], ["Atmosphere from bubble", "Atmosphere from volatilization", "Dissolved", "In bubble"], "Mass repartition", "kg",f'{path_timeseries}mass_balance.png')
+    create_stackplot(time_id_particles[1:], [rel_b/tot*100,rel_l/tot*100,dis/tot*100,fresh/tot*100], ["Atmosphere from bubble", "Atmosphere from volatilization", "Dissolved", "In bubble"], "Repartition", "%",f'{path_timeseries}repartition.png')
 
     path_to_files = [path_out+"_vola.nc",f'{path_timeseries}quantity_profile.png',f'{path_timeseries}concentration_profile.png',f'{path_timeseries}mass_balance.png',f'{path_timeseries}repartition.png']
     with zipfile.ZipFile(out_zip, 'w') as zipf:
