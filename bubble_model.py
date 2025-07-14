@@ -413,6 +413,8 @@ release_type = Enum('release_type',[
 
 
 def clean_folder(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
 
@@ -562,7 +564,7 @@ def run_model(
         f.write('{\n"simulation": [\n')
 
     #cleaning
-    clean_folder("tmp")
+    clean_folder(f"{out_files}_tmp")
 
     
     init_density = density_from_pressure(mw, P_from_depth(TOTAL_DEPTH, p_atm = P_ATM, rho_w = RHO_W), T_W)
@@ -1161,7 +1163,7 @@ def run_model(
                 poly3d = [[tupleList[vertices[ix][iy]] for iy in range(len(vertices[0]))] for ix in range(len(vertices))]
                 ax.add_collection3d(Poly3DCollection(poly3d, facecolors='g', linewidths=1, alpha=min(0.1,10**conc_layers[j,0]/1000)))
 
-            plt.savefig(f'tmp/{nbr_img:05d}.png')
+            plt.savefig(f'{out_files}_tmp/{nbr_img:05d}.png')
             plt.close(fig)
             
             last_image = current_time

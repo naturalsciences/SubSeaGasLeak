@@ -342,9 +342,6 @@ def run(gui, sim_name, path_api, already_preprocessed):
             # Convert the datetime object to seconds since epoch
             epoch_time = int(datetime_obj.timestamp())
 
-            if not os.path.exists(f'tmp/') :
-                os.mkdir(f'tmp/')
-
             if not os.path.exists(f'results/') :
                 os.mkdir(f'results/')
 

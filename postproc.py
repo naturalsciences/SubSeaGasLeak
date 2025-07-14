@@ -206,7 +206,7 @@ def load_releases(path_release):
     return releases
 
     
-def save_quantity_layers(time, z_layers, quantity, title, units, path):
+def save_quantity_layers(time, z_layers, quantity, title, units, path, max_val):
     plt.figure(figsize=(12, 6))
 
 
@@ -215,10 +215,10 @@ def save_quantity_layers(time, z_layers, quantity, title, units, path):
     depth_centers = z_layers  # Already correct size
     time_mesh2, depth_mesh2 = np.meshgrid(time_centers, depth_centers)
     pcm = plt.pcolormesh(time_mesh2, depth_mesh2, quantity.T, 
-                        cmap='viridis', shading='flat')
+                        cmap='viridis', shading='flat', vmax = max_val)
 
     # Add a colorbar
-    cbar = plt.colorbar(pcm)
+    cbar = plt.colorbar(pcm, extend='max')
     cbar.set_label(units)
 
     # Set labels and title
@@ -437,11 +437,14 @@ def run_postproc(path_metadata, path_particle, path_layers, path_release, id_gas
                 conc_dis[i,j] = quantity_dis[i,j] / volume * 1000 * (mw[id_gas_interest]) #mg/l
 
     quantity_dis_kg = quantity_dis * (mw[id_gas_interest]) #to kg
-    #concentration
+    
+    #removing artefact due to the model
+    max_q_dis = np.amax(quantity_dis_kg[:,:-1])# top layer should not have a bigger mass than any other in the legend
 
-   
-    save_quantity_layers(time_id_particles, z_layers, quantity_dis_kg,'Dissolved mass as a function of depth','[kg]',f'{path_timeseries}quantity_profile.png')
-    save_quantity_layers(time_id_particles, z_layers, conc_dis,'Concentration as a function of depth','[mg/l]',f'{path_timeseries}concentration_profile.png')
+    max_conc = np.amax(conc_dis[int(0.1*nbr_tmstp):,:]) # the start of the simulation should not have that of a high concentration
+
+    save_quantity_layers(time_id_particles, z_layers, quantity_dis_kg,'Dissolved mass as a function of depth','[kg]',f'{path_timeseries}quantity_profile.png', max_q_dis)
+    save_quantity_layers(time_id_particles, z_layers, conc_dis,'Concentration as a function of depth','[mg/l]',f'{path_timeseries}concentration_profile.png', max_conc)
 
 
     quantity_tr_layer, quantity_tr_bubble, xs, ys = compute_vola(layer_matrix_x, layer_matrix_y, layer_release, time_id_layers, releases, x_res, y_res, alias_factor, time_id_particles, id_gas_interest)
