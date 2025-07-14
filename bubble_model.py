@@ -568,7 +568,8 @@ def run_model(
 
     
     init_density = density_from_pressure(mw, P_from_depth(TOTAL_DEPTH, p_atm = P_ATM, rho_w = RHO_W), T_W)
-
+    if init_density > RHO_W:
+        raise ValueError("The initial density of the gas is higher than the ambient water density")
     flow_rate = MASSIC_FLOW_RATE / init_density
 
     exit_velocity = flow_rate / AREA_BREACH
