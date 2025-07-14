@@ -395,7 +395,7 @@ def create_stackplot(times, vars, names, title, ylabel, path):
     plt.legend(loc='upper left')
     plt.grid(True, alpha=0.3)
     plt.xlim(times[0], times[-1])
-    plt.ylim(0,np.amax(np.sum(vars,axis=0)))
+    plt.ylim(0,np.nanmax(np.sum(vars,axis=0)))
     plt.savefig(path)
 
 def run_postproc(path_metadata, path_particle, path_layers, path_release, id_gas_interest, x_res, y_res, alias_factor, mw, path_out, out_zip, path_timeseries, lon, lat, epoch_time):
