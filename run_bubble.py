@@ -89,7 +89,7 @@ def update_status(sim_ID, status, path_api, msg = ""):
     """
     Update the status of the simulation sim_ID with status and the message msg
     """
-    proc = subprocess.Popen(f"python3 {path_api} \"{sim_ID}\" \"{status}\" \"{msg}\"", shell=True)
+    proc = subprocess.Popen(f"python3 {path_api}/OSERIT_RAISING_BUBBLE/update_status_RAISING_BUBBLE.py \"{sim_ID}\" \"{status}\" \"{msg}\"", shell=True)
     proc.wait()
 
 def load_and_check(sim_name, data, name, units, bypass_verif = 0, type = None):
@@ -168,7 +168,7 @@ def run(gui, sim_name, path_api, already_preprocessed):
         if sim_name > 95000:
             logging.warning(f"Only {99999-sim_name} simulations remaining before running out of ids")
 
-        #update_status(sim_name, "COMPUTING", path_api)
+        update_status(sim_name, "COMPUTING", path_api)
 
 
         try:
