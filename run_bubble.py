@@ -383,11 +383,14 @@ def run(gui, sim_name, path_api, already_preprocessed):
                             epoch_time
                             )
 
-        
+            
+            if path_api is not None:
+                proc = subprocess.Popen(f"python3 {path_api}/OSERIT_RAISING_BUBBLE/send_results_RAISING_BUBBLE.py \"{os.path.dirname(os.path.realpath(__file__))}/results/{sim_name:05d}\" \"{sim_name}\" \"{os.path.dirname(os.path.realpath(__file__))}/{out_zip}\"", shell=True)
+                proc.wait()
 
         except Exception as e:
-            logging.error(f"Error in the json :{traceback.format_exc()}")
-            update_status(sim_name, "ERROR", f"Error in the json :{e}")
+            logging.error(f"Error in the simulation :{traceback.format_exc()}")
+            update_status(sim_name, "ERROR", f"Error in the simulation :{e}")
             sys.exit()
 
 
